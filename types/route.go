@@ -16,8 +16,8 @@
 package types
 
 import (
-	"net"
 	"fmt"
+	"net"
 	"strings"
 
 	vppip "github.com/calico-vpp/vpplink/binapi/20.09-rc0~76-g6ec3f62e7/ip"
@@ -90,4 +90,3 @@ func (r *Route) dstString() string {
 func (r *Route) String() string {
 	return fmt.Sprintf("%s%s -> %s", r.tableString(), r.dstString(), r.pathsString())
 }
-

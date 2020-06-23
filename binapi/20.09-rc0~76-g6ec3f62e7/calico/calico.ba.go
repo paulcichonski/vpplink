@@ -7,7 +7,7 @@ Package calico is a generated VPP binary API for 'calico' module.
 It consists of:
 	  7 enums
 	  5 aliases
-	 12 types
+	 13 types
 	  1 union
 	 10 messages
 	  5 services
@@ -30,7 +30,7 @@ const (
 	// APIVersion is the API version of this module.
 	APIVersion = "0.1.0"
 	// VersionCrc is the CRC of this module.
-	VersionCrc = 0xe04c5d41
+	VersionCrc = 0x2e25ee5a
 )
 
 // AddressFamily represents VPP binary API enum 'address_family'.
@@ -384,6 +384,14 @@ type CalicoEndpoint struct {
 
 func (*CalicoEndpoint) GetTypeName() string { return "calico_endpoint" }
 
+// CalicoEndpointTuple represents VPP binary API type 'calico_endpoint_tuple'.
+type CalicoEndpointTuple struct {
+	DstEp CalicoEndpoint
+	SrcEp CalicoEndpoint
+}
+
+func (*CalicoEndpointTuple) GetTypeName() string { return "calico_endpoint_tuple" }
+
 // CalicoSession represents VPP binary API type 'calico_session'.
 type CalicoSession struct {
 	Src       CalicoEndpoint
@@ -397,11 +405,12 @@ func (*CalicoSession) GetTypeName() string { return "calico_session" }
 
 // CalicoTranslation represents VPP binary API type 'calico_translation'.
 type CalicoTranslation struct {
-	Vip     CalicoEndpoint
-	ID      uint32
-	IPProto IPProto
-	NPaths  uint8 `struc:"sizeof=Paths"`
-	Paths   []CalicoEndpoint
+	Vip      CalicoEndpoint
+	ID       uint32
+	IPProto  IPProto
+	IsRealIP uint8
+	NPaths   uint8 `struc:"sizeof=Paths"`
+	Paths    []CalicoEndpointTuple
 }
 
 func (*CalicoTranslation) GetTypeName() string { return "calico_translation" }
@@ -589,7 +598,7 @@ type CalicoTranslationDetails struct {
 
 func (m *CalicoTranslationDetails) Reset()                        { *m = CalicoTranslationDetails{} }
 func (*CalicoTranslationDetails) GetMessageName() string          { return "calico_translation_details" }
-func (*CalicoTranslationDetails) GetCrcString() string            { return "4a14dfd2" }
+func (*CalicoTranslationDetails) GetCrcString() string            { return "8e0d1c7c" }
 func (*CalicoTranslationDetails) GetMessageType() api.MessageType { return api.ReplyMessage }
 
 // CalicoTranslationDump represents VPP binary API message 'calico_translation_dump'.
@@ -607,7 +616,7 @@ type CalicoTranslationUpdate struct {
 
 func (m *CalicoTranslationUpdate) Reset()                        { *m = CalicoTranslationUpdate{} }
 func (*CalicoTranslationUpdate) GetMessageName() string          { return "calico_translation_update" }
-func (*CalicoTranslationUpdate) GetCrcString() string            { return "c61be5c4" }
+func (*CalicoTranslationUpdate) GetCrcString() string            { return "9a9f6070" }
 func (*CalicoTranslationUpdate) GetMessageType() api.MessageType { return api.RequestMessage }
 
 // CalicoTranslationUpdateReply represents VPP binary API message 'calico_translation_update_reply'.

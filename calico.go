@@ -28,21 +28,25 @@ const InvalidID = ^uint32(0)
 func (v *VppLink) CalicoTranslateAdd(tr *types.CalicoTranslateEntry) (id uint32, err error) {
 	v.lock.Lock()
 	defer v.lock.Unlock()
-	if len(tr.BackendIPs) == 0 {
+	if len(tr.Backends) == 0 {
 		return InvalidID, nil
 	}
 
-	paths := make([]calico.CalicoEndpoint, 0, len(tr.BackendIPs))
-	for _, bip := range tr.BackendIPs {
-		paths = append(paths, types.ToCalicoEndpoint(bip, tr.DestPort))
+	paths := make([]calico.CalicoEndpointTuple, 0, len(tr.Backends))
+	for _, backend := range tr.Backends {
+		paths = append(paths, calico.CalicoEndpointTuple{
+			SrcEp: types.ToCalicoEndpoint(backend.SrcEndpoint),
+			DstEp: types.ToCalicoEndpoint(backend.DstEndpoint),
+		})
 	}
 
 	response := &calico.CalicoTranslationUpdateReply{}
 	request := &calico.CalicoTranslationUpdate{
 		Translation: calico.CalicoTranslation{
-			Vip:     types.ToCalicoEndpoint(tr.Vip, tr.SrcPort),
-			IPProto: types.ToCalicoProto(tr.Proto),
-			Paths:   paths,
+			Vip:      types.ToCalicoEndpoint(tr.Endpoint),
+			IPProto:  types.ToCalicoProto(tr.Proto),
+			Paths:    paths,
+			IsRealIP: BoolToU8(tr.IsRealIP),
 		},
 	}
 	err = v.ch.SendRequest(request).ReceiveReply(response)
